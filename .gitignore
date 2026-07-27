@@ -1,0 +1,15 @@
+# Runtime uploads
+/uploads/*
+!/uploads/.gitkeep
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
