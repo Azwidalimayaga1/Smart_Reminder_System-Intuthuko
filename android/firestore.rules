@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function rolePath() { return /databases/$(database)/documents/roles/$(request.auth.uid); }
+    function active() { return signedIn() && (!exists(rolePath()) || get(rolePath()).data.get('disabled', false) == false); }
+    function owner(uid) { return active() && request.auth.uid == uid; }
+    function roleIs(role) { return active() && exists(rolePath()) && get(rolePath()).data.role == role; }
+    function staff() { return roleIs('Tutor') || roleIs('Admin'); }
+    function validProfile() {
+      let p = request.resource.data;
+      return p.keys().hasAll(['username','email','studentNumber','phone','institution','course','yearOfStudy'])
+        && p.keys().hasOnly(['username','email','studentNumber','phone','institution','course','yearOfStudy'])
+        && p.username is string && p.username.size() > 0 && p.username.size() <= 160
+        && p.email == request.auth.token.email
+        && p.studentNumber is string && p.studentNumber.size() <= 80
+        && p.phone is string && p.phone.size() <= 80
+        && p.institution is string && p.institution.size() <= 200
+        && p.course is string && p.course.size() <= 200
+        && p.yearOfStudy is int && p.yearOfStudy >= 1 && p.yearOfStudy <= 10;
+    }
+    // Project owners provision roles in the Console/Admin SDK. App clients cannot grant any role.
+    match /roles/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+    match /profiles/{uid} {
+      allow get: if owner(uid);
+      allow create, update: if owner(uid) && validProfile();
+      allow list, delete: if false;
+    }
+    match /accounts/{uid} {
+      allow get: if owner(uid);
+      allow create: if owner(uid) && request.resource.data.keys().hasOnly(['schemaVersion']) && request.resource.data.schemaVersion == 1;
+      allow update, delete, list: if false;
+      match /items/{id} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid)
+          && request.resource.data.keys().hasOnly(['kind','payload'])
+          && request.resource.data.kind in ['tasks','notes','calendarEvents','notifications','userSubjects','gpaModules']
+          && request.resource.data.payload is string && request.resource.data.payload.size() <= 65000;
+      }
+    }
+    match /subjects/{id} {
+      allow read: if active();
+      allow create, update: if roleIs('Admin')
+        && request.resource.data.keys().hasOnly(['subjectId','subjectName','monthlyFee'])
+        && request.resource.data.subjectId is int && request.resource.data.subjectId > 0
+        && id == string(request.resource.data.subjectId)
+        && request.resource.data.subjectName is string && request.resource.data.subjectName.size() > 0 && request.resource.data.subjectName.size() <= 160
+        && request.resource.data.monthlyFee is number && request.resource.data.monthlyFee >= 0 && request.resource.data.monthlyFee <= 1000000;
+      allow delete: if roleIs('Admin');
+    }
+    match /announcements/{id} {
+      allow read: if active();
+      allow create: if staff() && validAnnouncement() && request.resource.data.authorUid == request.auth.uid;
+      allow update: if staff() && validAnnouncement()
+        && request.resource.data.authorUid == resource.data.authorUid
+        && (resource.data.authorUid == request.auth.uid || roleIs('Admin'));
+      allow delete: if roleIs('Admin') || (staff() && resource.data.authorUid == request.auth.uid);
+      function validAnnouncement() {
+        let a = request.resource.data;
+        return a.keys().hasOnly(['announcementId','title','message','timestamp','isDismissed','authorUid'])
+          && a.announcementId is int && a.announcementId > 0 && id == string(a.announcementId)
+          && a.title is string && a.title.size() > 0 && a.title.size() <= 160
+          && a.message is string && a.message.size() > 0 && a.message.size() <= 5000
+          && a.timestamp is string && a.timestamp.size() <= 40
+          && a.isDismissed == false && a.authorUid is string;
+      }
+    }
+    match /timetable/{id} {
+      allow read: if active();
+      allow write: if roleIs('Admin');
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -24,3 +24,7 @@ A PHP and MariaDB/MySQL reminder system for Intuthuko College. It supports user 
 
 This repository contains the application source code, database schema, and site images. Runtime uploads and duplicate coursework archives are intentionally excluded.
 
+
+## CampusSync Android app
+
+The native Kotlin/Jetpack Compose mobile app is in [`android/`](android/). See its [setup and build guide](android/README.md) for Firebase configuration, local demo accounts and tests. It includes distinct Student, Tutor and Admin dashboards, Google sign-in, private cloud sync and phone reminders.
