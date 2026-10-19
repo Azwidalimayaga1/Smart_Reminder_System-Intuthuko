@@ -10,7 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,24 +34,28 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(user: User) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = { AppHeader("Calendar", "Make room for what matters.", Icons.Default.CalendarMonth) }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().background(WarmBackground).padding(padding)) {
-            TabRow(selectedTabIndex = selectedTab, containerColor = SurfaceWhite, contentColor = CobaltBlue, indicator = { TabRowDefaults.Indicator(height = 3.dp, color = CobaltBlue) }, divider = { Divider(color = BorderColor, thickness = 1.dp) }) {
+            TabRow(selectedTabIndex = selectedTab, containerColor = SurfaceWhite, contentColor = CobaltBlue, indicator = { positions -> TabRowDefaults.Indicator(modifier = Modifier.tabIndicatorOffset(positions[selectedTab]), height = 3.dp, color = CobaltBlue) }, divider = { Divider(color = BorderColor, thickness = 1.dp) }) {
                 Tab(selectedTab == 0, onClick = { selectedTab = 0 }) {
                     Text("Month", modifier = Modifier.padding(14.dp), fontSize = 13.sp, fontWeight = if (selectedTab == 0) FontWeight.SemiBold else FontWeight.Normal, color = if (selectedTab == 0) CobaltBlue else SecondaryText)
                 }
                 Tab(selectedTab == 1, onClick = { selectedTab = 1 }) {
                     Text("Timetable", modifier = Modifier.padding(14.dp), fontSize = 13.sp, fontWeight = if (selectedTab == 1) FontWeight.SemiBold else FontWeight.Normal, color = if (selectedTab == 1) CobaltBlue else SecondaryText)
                 }
+                Tab(selectedTab == 2, onClick = { selectedTab = 2 }) {
+                    Text("Google", modifier = Modifier.padding(14.dp), fontSize = 13.sp, fontWeight = if (selectedTab == 2) FontWeight.SemiBold else FontWeight.Normal, color = if (selectedTab == 2) CobaltBlue else SecondaryText)
+                }
             }
 
             when (selectedTab) {
                 0 -> MonthView(user)
                 1 -> TimetableView()
+                2 -> GoogleCalendarTab(user)
             }
         }
     }

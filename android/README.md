@@ -24,6 +24,7 @@ Demo identities are not Firebase users. Release builds require online authentica
 - Google SSO and email/password authentication when Firebase is configured.
 - Private cloud records per account, with shared subject catalogue and staff campus updates protected by Firestore rules.
 - Android phone reminders, notification permission controls and an on-device reminder test.
+- Read-only Google Calendar integration: connect your Google account, view upcoming events, refresh, and disconnect.
 
 The PHP website and Android app currently use separate databases; they do not share login sessions or records.
 
@@ -37,13 +38,14 @@ From this folder on Windows:
 
 On macOS/Linux use `./gradlew` with the same tasks. The debug APK is generated in `app/build/outputs/apk/debug/`.
 
-The latest local checks passed 22 unit tests and Android lint with 0 errors (27 warnings). The three role dashboards were visually inspected on a Samsung SM-A526B. These are development checks, not a production-readiness certification. Real Student/Tutor account tests and release signing remain outstanding.
+The latest local checks passed 25 unit tests and Android lint with 0 errors (28 warnings). The three role dashboards were visually inspected on a Samsung SM-A526B. These are development checks, not a production-readiness certification. Real Student/Tutor account tests and release signing remain outstanding.
 
 Run connected instrumentation tests only on a disposable emulator/test device: the Gradle workflow may uninstall the app and remove its local data.
 
 ## Firebase and reminders
 
 - [Google sign-in setup](GOOGLE_SIGN_IN_SETUP.md)
+- [Google Calendar API setup and phone test results](GOOGLE_CALENDAR_INTEGRATION.md)
 - [Cloud schema, roles and emulator tests](CLOUD_DATABASE_SETUP.md)
 - [Phone reminders and limitations](PHONE_REMINDERS.md)
 - [Role dashboards and device checks](ROLE_DASHBOARDS.md)

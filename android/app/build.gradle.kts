@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
