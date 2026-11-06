@@ -131,11 +131,28 @@ private fun StudentDashboard(user: User, navController: NavController) {
 }
 @Composable
 private fun StatTile(label: String, value: String, icon: ImageVector, tint: Color, modifier: Modifier) {
-    Surface(modifier, color = SurfaceWhite, shape = RoundedCornerShape(22.dp)) {
-        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(icon, null, tint = tint, modifier = Modifier.size(22.dp))
-            Text(value, style = MaterialTheme.typography.headlineSmall, color = MainText)
-            Text(label, style = MaterialTheme.typography.bodySmall, color = SecondaryText)
+    Surface(
+        modifier = modifier.heightIn(min = 140.dp),
+        color = tint.copy(alpha = 0.10f),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(
+            Modifier.fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
+        ) {
+            Icon(icon, null, tint = tint, modifier = Modifier.size(24.dp))
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(
+                    value,
+                    style = MaterialTheme.typography.headlineMedium.copy(fontFeatureSettings = "tnum"),
+                    fontWeight = FontWeight.Bold,
+                    color = MainText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MainText, maxLines = 1)
+            }
         }
     }
 }
