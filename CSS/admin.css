@@ -1,0 +1,117 @@
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#1e293b;background:#f6f8fb;font-synthesis:none;--surface:#fff;--text:#1e293b;--muted:#475569;--line:#e2e8f0;--accent:#0055cc;--shadow:0 8px 28px rgba(25,35,65,.05)}
+:root[data-theme="dark"]{color-scheme:dark;--surface:#19283a;--text:#edf1fb;--muted:#a0abc0;--line:#334155;background:#101b2a;--shadow:0 8px 28px rgba(0,0,0,.16)}
+*{box-sizing:border-box}body{margin:0;background:inherit;color:var(--text)}html.auth-pending body{visibility:hidden}button,a{font:inherit}.admin-shell{min-height:100vh}.sidebar{width:248px;position:fixed;inset:0 auto 0 0;background:#003366;color:#fff;padding:28px 18px;display:flex;flex-direction:column;z-index:2}.brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;font-weight:750;font-size:19px;padding:0 8px 42px}.brand-mark{width:35px;height:35px;border-radius:11px;background:linear-gradient(135deg,#467fbb,#0055cc);display:grid;place-items:center}.side-label{font-size:10px;letter-spacing:1.5px;color:#9299b5;padding:0 10px 13px}.side-nav{display:grid;gap:7px}.side-nav a{color:#b9bfd3;text-decoration:none;padding:12px;border-radius:9px;font-size:14px}.side-nav a span{display:inline-block;width:27px}.side-nav a:hover,.side-nav a.active{background:#004080;color:#fff}.sidebar-bottom{margin-top:auto}.admin-profile{display:flex;align-items:center;gap:10px;padding:15px 7px;border-top:1px solid #285787}.avatar{width:35px;height:35px;border-radius:50%;background:#0055cc;display:grid;place-items:center;font-weight:700}.admin-profile strong,.admin-profile small{display:block}.admin-profile strong{font-size:12px}.admin-profile small{font-size:11px;color:#aeb4c9;margin-top:4px}.logout-btn{border:0;background:transparent;color:#c6cbe0;padding:10px 7px;cursor:pointer}.main-content{margin-left:248px;padding:35px clamp(20px,4vw,58px);max-width:1700px}.topbar,.section-heading,.top-actions,.stat-top,.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:15px}.topbar{margin-bottom:38px}.eyebrow{font-size:10px;letter-spacing:1.6px;color:var(--accent);font-weight:750;margin:0 0 8px}.topbar h1{font-size:29px;margin:0 0 7px}.muted,.stat-card small{color:var(--muted)}.muted{font-size:13px;margin:0}.small{font-size:11px}.role-pill{border:1px solid var(--line);border-radius:30px;padding:9px 13px;font-size:12px;color:var(--muted)}.refresh-btn{border:0;border-radius:8px;background:var(--accent);color:white;padding:11px 15px;cursor:pointer;font-weight:650}.section-block{margin-bottom:34px;scroll-margin-top:20px}.section-heading{margin-bottom:17px}.section-heading h2{font-size:18px;margin:0 0 6px}.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.stat-card,.panel{background:var(--surface);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow)}.stat-card{padding:19px}.stat-top{font-size:12px;color:var(--muted)}.stat-icon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:17px}.violet{background:#eef4fb;color:#0055cc}.blue{background:#e9f2ff;color:#0055cc}.green{background:#e7f7ef;color:#23945b}.orange{background:#fff2e4;color:#d77b21}.stat-card>strong{display:block;font-size:29px;margin:15px 0 5px;letter-spacing:-.7px}.stat-card small{font-size:11px}.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.panel{padding:20px}.panel-heading{margin-bottom:12px}.panel-heading h3{font-size:14px;margin:0 0 5px}.chart-wrap{height:250px;position:relative}.detail-panel{min-height:290px}.metric-row{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line);font-size:13px}.metric-row span{color:var(--muted)}.note{font-size:11px;line-height:1.6;color:var(--muted);margin-top:15px}.health-panel{display:flex;align-items:center;gap:45px;flex-wrap:wrap}.health-item{display:flex;align-items:center;gap:11px}.health-item strong,.health-item small{display:block}.health-item strong{font-size:13px}.health-item small{font-size:11px;color:var(--muted);margin-top:4px}.health-dot{width:9px;height:9px;border-radius:50%;background:#d4a03d}.health-dot.ok{background:#26a269}.health-dot.bad{background:#d94c55}.page-footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:11px}.toast{display:none;position:fixed;right:22px;bottom:22px;max-width:360px;background:#9e343d;color:white;padding:13px 17px;border-radius:9px;box-shadow:var(--shadow);font-size:13px}.toast.show{display:block}
+@media(max-width:1000px){.sidebar{width:205px}.main-content{margin-left:205px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.sidebar{position:static;width:auto;padding:15px 18px}.brand{padding:0 5px 14px}.side-label,.sidebar-bottom{display:none}.side-nav{display:flex;overflow-x:auto}.side-nav a{white-space:nowrap;padding:9px 11px}.main-content{margin:0;padding:25px 16px}.topbar{align-items:flex-start;flex-direction:column;margin-bottom:27px}.top-actions{width:100%;justify-content:space-between}.stats-grid{grid-template-columns:1fr 1fr;gap:10px}.stat-card{padding:14px}.stat-card>strong{font-size:24px}.charts-grid{grid-template-columns:1fr}.chart-wrap{height:230px}.section-heading{align-items:flex-start;flex-direction:column}.health-panel{gap:20px}.role-pill{display:none}}
+@media(max-width:380px){.stats-grid{grid-template-columns:1fr}.topbar h1{font-size:25px}}
+
+/* ================================
+   STUDENT MANAGEMENT
+================================ */
+
+.student-toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.student-toolbar input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+}
+
+.student-toolbar input:focus {
+    border-color: var(--accent);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+}
+
+.student-table th,
+.student-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.student-table th {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.student-table td {
+    color: var(--text);
+}
+
+.student-table tbody tr:hover {
+    background: rgba(120, 120, 150, .05);
+}
+
+@media (max-width: 600px) {
+    .student-toolbar {
+        flex-direction: column;
+    }
+}
+/* Account status badges */
+.account-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.account-status.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.account-status.suspended {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Suspend and reactivate buttons */
+.account-action-btn {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.account-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.brand-mark { object-fit: contain; background: white; }
+.admin-tutor-controls .role-panel { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 13px; }
+.admin-tutor-controls h2 { margin: 0 0 16px; font-size: 16px; }
+.admin-tutor-controls .role-form, .admin-tutor-controls .role-list { display: grid; gap: 9px; }
+.admin-tutor-controls input, .admin-tutor-controls select { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--text); }
+.admin-tutor-controls .role-button { width: fit-content; padding: 8px 12px; border: 0; border-radius: 8px; background: var(--accent); color: white; cursor: pointer; }
+.admin-tutor-controls .role-message, .admin-tutor-controls small { margin-top: 8px; color: var(--muted); }
+.admin-tutor-controls .role-list-item { display: flex; justify-content: space-between; gap: 10px; }
+.admin-tutor-controls small { display: block; }
+.admin-tutor-controls .temporary-credentials { margin-top: 12px; }
+@media(max-width:700px) { .sidebar-bottom { display:block; } .admin-profile { display:none; } }
+
+:root[data-theme="dark"] { --accent:#7ab4ff; }
+:root[data-theme="dark"] .refresh-btn, :root[data-theme="dark"] .admin-tutor-controls .role-button { background:#0055cc; }

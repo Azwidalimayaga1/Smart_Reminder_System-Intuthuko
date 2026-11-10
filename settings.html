@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Settings | CampusSync</title>
+    
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+    html {
+        visibility: hidden;
+    }
+</style>
+<link rel="icon" href="images/logo.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="CSS/reference.css">
+<link rel="stylesheet" href="CSS/portal-html.css">
+<script src="backend/js/student-session.js"></script></head>
+
+<body>
+
+<script>
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+  }
+</script>
+
+<!-- NAVBAR -->
+
+<nav class="navbar" aria-label="Main navigation"><div class="navbar-container">
+<a class="navbar-brand" href="dashboard.html"><h1>Smart Reminder System</h1><p class="college-name">Intuthuko College Staff Portal</p></a>
+<button class="hamburger" type="button" data-portal-menu aria-label="Toggle navigation menu" aria-controls="navbarMenu" aria-expanded="false"><span></span><span></span><span></span></button>
+<ul class="navbar-menu" id="navbarMenu"><li><a class="nav-link" href="dashboard.html">Dashboard</a></li><li><a class="nav-link" href="tasks.html">Tasks</a></li><li><a class="nav-link" href="schedule.html">Schedule</a></li><li><a class="nav-link" href="calendar.html">Calendar</a></li><li><a class="nav-link" href="notifications.html">Reminders</a></li><li class="portal-more"><details><summary class="nav-link">More</summary><div class="portal-more-menu"><a href="notes.html">Notes</a><a href="gpa.html">GPA calculator</a><a href="profile.html">Profile</a><a href="settings.html">Settings</a><a href="about.html">About</a><a href="Help_Center.html">Help centre</a></div></details></li></ul>
+<div class="navbar-user"><span class="welcome-text" id="portalWelcome">Intuthuko College</span><button class="logout-btn" type="button" data-portal-logout>Logout</button></div>
+</div></nav>
+
+<!-- MAIN -->
+
+<main class="container portal-page preferences-page">
+
+    <header class="page-header"><div><h1>Settings</h1><p>Manage your CampusSync preferences.</p></div></header>
+
+    <!-- APPEARANCE -->
+
+    <div class="settings-card">
+
+        <h2 class="portal-panel-title">Appearance</h2>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    Dark Mode
+                </div>
+
+                <div class="setting-description">
+                    Change the appearance of CampusSync.
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                  <input type="checkbox"
+                      id="darkMode"
+                      aria-label="Dark Mode">
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+    </div>
+
+    <!-- LANGUAGE -->
+
+    <div class="settings-card">
+
+        <h2 class="portal-panel-title">Language</h2>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    Application Language
+                </div>
+
+                <div class="setting-description">
+                    Select your preferred language.
+                </div>
+
+            </div>
+
+            <select id="language" aria-label="Application Language">
+
+                <option value="english">
+                    English
+                </option>
+
+                <option value="zulu">
+                    isiZulu
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="settings-card">
+
+        <h2 class="portal-panel-title">Notifications</h2>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    Assignment Alerts
+                </div>
+
+                <div class="setting-description">
+                    Receive reminders about upcoming assignments.
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                  <input type="checkbox" id="assignmentAlerts" data-preference="assignmentAlerts" aria-label="Assignment Alerts" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    Class Reminders
+                </div>
+
+                <div class="setting-description">
+                    Receive reminders before your classes.
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                  <input type="checkbox" id="classReminders" data-preference="classReminders" aria-label="Class Reminders" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    Announcements
+                </div>
+
+                <div class="setting-description">
+                    Receive important academic announcements.
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                  <input type="checkbox" id="announcements" data-preference="announcements" aria-label="Announcements" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+    </div>
+
+    <!-- OFFLINE -->
+
+    <div class="settings-card">
+
+        <h2 class="portal-panel-title">Offline & Sync</h2>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    Offline Mode
+                </div>
+
+                <div class="setting-description">
+                    Access saved information without an internet connection.
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                <input type="checkbox" id="offlineMode" data-preference="offlineMode" aria-label="Offline Mode" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="setting">
+
+            <div>
+
+                <div>
+
+                    <strong>
+                        Synchronisation
+                    </strong>
+
+                </div>
+
+                <div class="setting-description">
+                    <span id="syncStatusText">Preferences are saved on this device.</span>
+                </div>
+
+            </div>
+
+            <button class="sync-btn"
+                    onclick="syncData()">
+
+                Sync Now
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ABOUT -->
+
+    <div class="settings-card">
+
+        <h2 class="portal-panel-title">About</h2>
+
+        <div class="setting">
+
+            <div>
+
+                <div class="setting-name">
+                    CampusSync
+                </div>
+
+                <div class="setting-description">
+                    Student academic management application.
+                </div>
+
+            </div>
+
+            <span class="version">
+                Version 1.0.0
+            </span>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<script src="backend/js/localData.js"></script>
+<script src="backend/js/settings.js"></script>
+<script src="backend/js/theme.js"></script>
+<script src="backend/js/auth.js"></script>
+<script src="backend/js/auth-guard.js"></script>
+<script src="backend/js/logout.js"></script>
+
+<footer class="reference-footer"><p><strong>Intuthuko College</strong> — Smart Reminder System</p><p>Academic tasks, schedules and reminders.</p></footer>
+<script src="backend/js/portal-ui.js"></script>
+</body>
+
+</html>

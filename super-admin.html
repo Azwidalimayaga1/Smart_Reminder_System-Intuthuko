@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="backend/js/student-session.js"></script>
+  <style>.staff-summary { display:flex; flex-wrap:wrap; gap:18px; margin:0 0 16px; color:var(--muted); font-size:13px; } .staff-summary strong { margin-left:4px; color:var(--text); }</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CampusSync administrator monitoring dashboard">
+  <title>Super Admin Dashboard | CampusSync</title>
+  <link rel="icon" href="images/logo.png">
+  <link rel="stylesheet" href="CSS/admin.css">
+  <script>
+    document.documentElement.classList.add("auth-pending");
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.dataset.theme = "dark";
+    }
+  </script>
+</head>
+<body data-super-admin>
+  <div class="admin-shell">
+
+    <aside class="sidebar">
+      <a class="brand" href="super-admin.html">
+        <img class="brand-mark" src="images/logo.png" alt="Intuthuko College">
+        <span>CampusSync</span>
+      </a>
+
+      <div class="side-label">ADMINISTRATION</div>
+
+      <nav class="side-nav" aria-label="Administrator navigation">
+        <a class="active" href="#overview">Overview</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#user-activity">User activity</a>
+        <a href="#students">Student management</a>
+        <a href="#staff-access">Staff access</a>
+        <a href="#system-health">System health</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="admin-profile">
+          <div class="avatar">A</div>
+          <div>
+            <strong id="adminName">Administrator</strong>
+            <small>System monitor</small>
+          </div>
+        </div>
+        <button id="logoutBtn" class="logout-btn" type="button">↪ Log out</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">CAMPUSSYNC / SUPER ADMIN</p>
+          <h1>Super Admin overview</h1>
+          <p class="muted">Monitor CampusSync accounts and student activity in Firebase.</p>
+        </div>
+        <div class="top-actions">
+          <span class="role-pill">Super Admin</span>
+          <button id="refreshBtn" class="refresh-btn" type="button">↻ Refresh data</button>
+        </div>
+      </header>
+
+      <!-- OVERVIEW -->
+      <section id="overview" class="section-block">
+        <div class="section-heading">
+          <div>
+            <h2>Platform at a glance</h2>
+            <p class="muted">Live totals from the CampusSync database.</p>
+          </div>
+          <span id="lastUpdated" class="muted small">Not yet updated</span>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-top"><span>Total students</span><span class="stat-icon violet">♙</span></div>
+            <strong id="totalStudents">—</strong>
+            <small>Registered student accounts</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Tasks created</span><span class="stat-icon blue">▤</span></div>
+            <strong id="totalTasks">—</strong>
+            <small>Across the platform</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Tasks completed</span><span class="stat-icon green">✓</span></div>
+            <strong id="completedTasks">—</strong>
+            <small>Marked as completed</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Overdue tasks</span><span class="stat-icon orange">!</span></div>
+            <strong id="overdueTasks">—</strong>
+            <small>Past due and not completed</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Scheduled reminders</span><span class="stat-icon green">↗</span></div>
+            <strong id="sentReminders">—</strong>
+            <small>Task reminders scheduled in CampusSync</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Notifications</span><span class="stat-icon blue">◉</span></div>
+            <strong id="totalNotifications">—</strong>
+            <small>Created by the platform</small>
+          </article>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="analytics" class="section-block">
+        <div class="section-heading">
+          <div>
+            <h2>Usage analytics</h2>
+            <p class="muted">Monthly student registrations and task creation.</p>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div><h3>First student sign-ins</h3><p class="muted">Last six months</p></div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="registrationsChart" aria-label="Monthly student registrations chart"></canvas>
+            </div>
+          </article>
+
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div><h3>Task activity</h3><p class="muted">Current task status breakdown</p></div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="taskStatusChart" aria-label="Task status doughnut chart"></canvas>
+            </div>
+          </article>
+        </div>
+
+        <div class="charts-grid lower-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div><h3>Tasks created</h3><p class="muted">Last six months</p></div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="tasksChart" aria-label="Monthly task creation chart"></canvas>
+            </div>
+          </article>
+
+          <article class="panel detail-panel">
+            <div class="panel-heading">
+              <div><h3>Reminders and notifications</h3><p class="muted">Current delivery status totals</p></div>
+            </div>
+            <div class="metric-row"><span>Scheduled</span><strong id="reminderSentDetail">—</strong></div>
+            <div class="metric-row"><span>Upcoming</span><strong id="reminderPendingDetail">—</strong></div>
+            <div class="metric-row"><span>Past due time</span><strong id="reminderCancelledDetail">—</strong></div>
+            <div class="metric-row"><span>Unread notifications</span><strong id="unreadNotifications">—</strong></div>
+            <p class="note">Counts reflect the statuses stored in the database; they are not a measure of student engagement.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- USER ACTIVITY -->
+      <section id="user-activity" class="section-block">
+        <div class="section-heading">
+          <div>
+            <h2>User activity</h2>
+            <p class="muted">Monitor student engagement and recent platform activity.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-top"><span>Enabled student accounts</span></div>
+            <strong id="activeStudents">—</strong>
+            <small>Student accounts with access</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Tasks created</span></div>
+            <strong id="activityTasksCreated">—</strong>
+            <small>Total student tasks</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Reminders created</span></div>
+            <strong id="activityRemindersCreated">—</strong>
+            <small>Total student reminders</small>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top"><span>Notifications received</span></div>
+            <strong id="activityNotifications">—</strong>
+            <small>Total notifications</small>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Recent activity</h3>
+              <p class="muted">Latest recorded student actions.</p>
+            </div>
+          </div>
+
+        <div class="table-responsive">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Activity</th>
+                        <th>Details</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="activityTableBody">
+                    <tr>
+                        <td colspan="4">Loading recent activity...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </article>
+      </section>
+
+      <!-- STUDENT MANAGEMENT -->
+      <section id="students" class="section-block">
+        <div class="section-heading">
+          <div>
+            <h2>Student management</h2>
+            <p class="muted">Search, view and manage registered CampusSync student accounts.</p>
+          </div>
+          <span id="studentCount" class="muted small">Loading students...</span>
+        </div>
+
+        <article class="panel">
+          <div class="student-toolbar">
+            <input
+              type="search"
+              id="studentSearch"
+              placeholder="Search by name, student number or email..."
+              aria-label="Search students"
+            >
+            <button id="studentSearchBtn" class="refresh-btn" type="button">Search</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="student-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Student number</th>
+                  <th>Email address</th>
+                  <th>First CampusSync sign-in</th>
+                  <th>Account status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <tr>
+                  <td colspan="6">Loading student accounts...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section id="staff-access" class="section-block">
+        <div class="section-heading"><h2>Staff access</h2></div>
+        <section class="staff-summary" aria-label="Staff account totals">
+            <span>Administrators <strong id="totalAdmins">—</strong></span>
+            <span>Tutors <strong id="totalTutors">—</strong></span>
+            <span>Super Admins <strong id="totalSuperAdmins">—</strong></span>
+        </section>
+
+        <div class="charts-grid admin-tutor-controls">
+            <section class="role-panel">
+                <div class="role-panel-head">
+                    <h2>Administrator accounts</h2>
+                    <span class="status-pill info">Super Admin only</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="student-table">
+                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Account</th></tr></thead>
+                        <tbody id="adminAccounts"><tr><td colspan="4">Loading administrator accounts...</td></tr></tbody>
+                    </table>
+                </div>
+                <p class="role-note">Roles shown here also apply in the Android app.</p>
+            </section>
+
+            <aside>
+                <section class="role-panel">
+                    <div class="role-panel-head"><h2>Grant administrator access</h2></div>
+                    <p class="role-note">Ask the person to sign in to CampusSync once. Copy their UID from Firebase Authentication.</p>
+                    <form id="grantAdminForm" class="role-form">
+                        <label for="adminUid">Firebase Authentication UID</label>
+                        <input id="adminUid" name="uid" required maxlength="128" autocomplete="off" spellcheck="false">
+                        <button class="role-button primary" type="submit" disabled>Grant Admin access</button>
+                    </form>
+                    <p class="role-message" id="superAdminMessage" role="status"></p>
+                </section>
+            </aside>
+        </div>
+
+        
+      </section>
+
+      <!-- SYSTEM HEALTH -->
+      <section id="system-health" class="section-block">
+        <div class="section-heading">
+          <div>
+            <h2>System health</h2>
+            <p class="muted">Connection checks for live Firebase data.</p>
+          </div>
+        </div>
+
+        <article class="panel health-panel">
+          <div class="health-item">
+            <span class="health-dot" id="apiDot"></span>
+            <div><strong>Firebase Authentication</strong><small id="apiStatus">Checking…</small></div>
+          </div>
+          <div class="health-item">
+            <span class="health-dot" id="dbDot"></span>
+            <div><strong>Cloud Firestore</strong><small id="dbStatus">Checking…</small></div>
+          </div>
+          <span id="healthChecked" class="muted small"></span>
+        </article>
+      </section>
+
+      <footer class="page-footer">CampusSync Super Admin</footer>
+    </main>
+  </div>
+
+  <div id="dashboardError" class="toast" role="alert" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="backend/js/localData.js"></script>
+  <script src="backend/js/adminDashboard.js"></script>
+  <script src="backend/js/superAdminDashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CampusSync tutor workspace overview.">
+    <title>Tutor Workspace | CampusSync</title>
+    
+    
+<link rel="icon" href="images/logo.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="CSS/reference.css">
+<link rel="stylesheet" href="CSS/portal-html.css">
+<script src="backend/js/student-session.js"></script>
+<style>.role-app .role-stat { border-left-width:1px; } .role-app .role-intro h1 { color:var(--primary); } .role-app .role-form .role-button { background:var(--accent); color:white; }</style>
+</head>
+<body><nav class="navbar" aria-label="Main navigation"><div class="navbar-container">
+<a class="navbar-brand" href="tutor.html"><h1>Smart Reminder System</h1><p class="college-name">Intuthuko College Staff Portal</p></a>
+<button class="hamburger" type="button" data-portal-menu aria-label="Toggle navigation menu" aria-controls="navbarMenu" aria-expanded="false"><span></span><span></span><span></span></button>
+<ul class="navbar-menu" id="navbarMenu"><li><a class="nav-link" href="tutor.html">Overview</a></li><li><a class="nav-link" href="#assign-task">Assign Task</a></li><li><a class="nav-link" href="#learner-tasks">Learner Tasks</a></li></ul>
+<div class="navbar-user"><span class="welcome-text" id="portalWelcome">Intuthuko College</span><button class="logout-btn" type="button" data-logout>Logout</button></div>
+</div></nav>
+    <p class="role-access-message" id="roleAccessMessage" hidden role="alert"></p>
+    <main class="role-app" data-role-page="tutor" data-cloud-only>
+        <header class="role-header">
+            <a class="role-brand" href="index.html">
+                <span class="role-brand-mark">C</span>
+                <span>CampusSync <small class="role-brand-subtitle">Tutor workspace</small></span>
+            </a>
+            <nav class="role-nav" aria-label="Staff portals">
+                <a href="tutor.html" aria-current="page">My overview</a>
+            </nav>
+            <div class="role-identity">
+                <span id="staffName">Tutor</span>
+                <span class="role-avatar" aria-hidden="true">JT</span>
+            </div>
+        </header>
+
+        <section class="role-intro">
+            <div>
+                <div class="role-eyebrow">Tutor workspace</div>
+                <h1>Manage lessons, reminders, and learner support tasks</h1>
+                <p >Assign work, share notes and schedule meetings for your learners.</p>
+            </div>
+            <span class="sample-pill">Firebase</span>
+        </section>
+        <section class="role-stats" aria-label="Tutor task summary">
+            <article class="role-stat"><span class="role-stat-label">My students</span><strong id="tutorStudentCount">—</strong></article>
+            <article class="role-stat"><span class="role-stat-label">Assigned tasks</span><strong id="tutorTaskCount">—</strong></article>
+            <article class="role-stat"><span class="role-stat-label">Pending tasks</span><strong id="tutorPendingCount">—</strong></article>
+            <article class="role-stat"><span class="role-stat-label">Completed tasks</span><strong id="tutorCompletedCount">—</strong></article>
+        </section>
+        <div class="role-grid">
+            <section class="role-panel" id="assign-task">
+                <div class="role-panel-head"><h2>Assign and track tasks</h2></div>
+                <form id="assignTaskForm" class="role-form">
+                    <label for="taskStudent">Learner</label>
+                    <select id="taskStudent" required></select>
+                    <label for="taskTitle">Task title</label>
+                    <input id="taskTitle" required maxlength="160">
+                    <label for="taskDescription">Instructions (optional)</label>
+                    <input id="taskDescription" maxlength="2000">
+                    <label for="taskDue">Due date</label>
+                    <input id="taskDue" type="date" required>
+                    <label for="taskPriority">Priority</label>
+                    <select id="taskPriority"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select>
+                    <label for="taskPdf">Attach a PDF (optional, up to 512 KB)</label>
+                    <input id="taskPdf" type="file" accept=".pdf,application/pdf">
+                    <button class="role-button primary" id="assignTaskButton" type="submit" disabled>Create Task</button>
+                </form>
+                <p class="role-message" id="tutorTaskMessage" role="status"></p>
+            </section>
+            <aside>
+                <section class="role-panel">
+                    <div class="role-panel-head"><h2>High Priority Tasks</h2></div>
+                    <div class="role-list" id="tutorHighPriority"></div>
+                </section>
+                <section class="role-panel">
+                    <div class="role-panel-head"><h2>Upcoming Deadlines</h2><span>Next 7 days</span></div>
+                    <div class="role-list" id="tutorUpcoming"></div>
+                </section>
+            </aside>
+        </div>
+        <div class="role-grid">
+            <section class="role-panel" id="post-notes">
+                <div class="role-panel-head"><h2>Post notes</h2></div>
+                <form id="postNoteForm" class="role-form">
+                    <label for="noteStudent">Learner</label>
+                    <select id="noteStudent" required></select>
+                    <label for="noteTitle">Note title</label>
+                    <input id="noteTitle" required maxlength="160">
+                    <label for="noteBody">Note text</label>
+                    <textarea id="noteBody" rows="4" maxlength="10000"></textarea>
+                    <label for="notePdf">Attach a PDF (optional, up to 512 KB)</label>
+                    <input id="notePdf" type="file" accept=".pdf,application/pdf">
+                    <button class="role-button primary" id="postNoteButton" type="submit" disabled>Post notes</button>
+                </form>
+                <p class="role-message" id="tutorNoteMessage" role="status"></p>
+            </section>
+            <section class="role-panel" id="schedule-meeting">
+                <div class="role-panel-head"><h2>Schedule a meeting</h2></div>
+                <form id="scheduleMeetingForm" class="role-form">
+                    <label for="meetingStudent">Learner</label>
+                    <select id="meetingStudent" required></select>
+                    <label for="meetingTitle">Meeting title</label>
+                    <input id="meetingTitle" required maxlength="160">
+                    <label for="meetingDate">Date</label>
+                    <input id="meetingDate" type="date" required>
+                    <label for="meetingTime">Time (South Africa)</label>
+                    <input id="meetingTime" type="time" required>
+                    <label for="meetingDetails">Location or instructions (optional)</label>
+                    <textarea id="meetingDetails" rows="3" maxlength="2000"></textarea>
+                    <button class="role-button primary" id="scheduleMeetingButton" type="submit" disabled>Add to CampusSync calendar</button>
+                </form>
+                <p class="role-message" id="tutorMeetingMessage" role="status"></p>
+            </section>
+        </div>
+        <section class="role-panel">
+            <div class="role-panel-head"><h2>Posted notes and meetings</h2></div>
+            <div class="role-list" id="tutorPosts"></div>
+        </section>
+        <section class="role-panel" id="learner-tasks">
+            <div class="role-panel-head"><h2>Learner Tasks</h2></div>
+            <div class="role-table-wrap"><table class="role-table">
+                <thead><tr><th>Task</th><th>Learner</th><th>Due date</th><th>Priority</th><th>Status</th></tr></thead>
+                <tbody id="learnerTasks"></tbody>
+            </table></div>
+        </section>
+
+    </main>
+    <script src="backend/js/localData.js"></script>
+    <script src="backend/js/roleAccess.js"></script>
+    <script src="backend/js/tutorDashboard.js"></script>
+<footer class="reference-footer"><p><strong>Intuthuko College</strong> — Smart Reminder System</p><p>Academic tasks, schedules and reminders.</p></footer>
+<script src="backend/js/portal-ui.js"></script>
+</body>
+</html>
