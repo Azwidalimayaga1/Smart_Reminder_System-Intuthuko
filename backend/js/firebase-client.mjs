@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js';
-import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, reauthenticateWithPopup, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, reload, getIdToken, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
+import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, reauthenticateWithPopup, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
 import { getFirestore, doc, collection, getDocFromServer, getDocsFromServer, query, where, runTransaction, writeBatch, onSnapshot,
   setDoc } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.mjs';
@@ -85,6 +85,14 @@ async function finishLogin(credential) {
 export async function emailLogin(email, password) {
   const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
   return finishLogin(credential);
+}
+
+export async function resetPassword(email) {
+  try { await sendPasswordResetEmail(auth, email.trim()); }
+  catch (error) {
+    // Keep the response the same whether the address has an account or not.
+    if (error.code !== 'auth/user-not-found') throw error;
+  }
 }
 
 export async function registerAccount(name, email, password, studentNumber) {
