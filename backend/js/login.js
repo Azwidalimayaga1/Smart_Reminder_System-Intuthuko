@@ -18,7 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (demoButton) demoButton.disabled = value;
     }
     let firebase;
-    session.loadFirebase().then(client => { firebase = client; }).catch(() => {});
+    session.loadFirebase().then(async client => {
+        firebase = client;
+        const pending = await client.currentUser();
+        if (pending && !pending.emailVerified) window.CampusSyncVerification.show(client);
+    }).catch(() => {});
 
     function showError(message) {
         errorMessage.textContent = message;
@@ -43,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 redirect(await session.signInWithEmail(firebase, email, password));
             }
         } catch (error) {
-            showError(!useDemo && firebase ? firebase.friendlyError(error) : error.message);
+            if (error.code === 'auth/email-not-verified') window.CampusSyncVerification.show(firebase);
+            else showError(!useDemo && firebase ? firebase.friendlyError(error) : error.message);
         } finally { setBusy(false); }
     });
 
@@ -64,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             redirect(await session.signInWithGoogle(firebase));
         } catch (error) {
-            showError(firebase.friendlyError(error));
+            if (error.code === 'auth/email-not-verified') window.CampusSyncVerification.show(firebase);
+            else showError(firebase.friendlyError(error));
         } finally {
             setBusy(false);
         }

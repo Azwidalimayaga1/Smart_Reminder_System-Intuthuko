@@ -1,41 +1,23 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("changePasswordForm");
-    const message = document.getElementById("passwordMessage");
+document.addEventListener('DOMContentLoaded', async () => {
+    const session = window.CampusSyncSession;
+    const firebase = await session.ready;
     const user = window.CampusSyncLocal.getCurrentUser();
-
-    if (!user || !["admin", "super_admin", "tutor"].includes(user.role)) {
-        window.location.replace(user
-            ? window.CampusSyncLocal.loginPages[user.role]
-            : "admin-login.html");
-        return;
-    }
-
-    form.addEventListener("submit", event => {
+    if (!user?.cloud || !firebase) { location.replace('login.html'); return; }
+    const form = document.getElementById('changePasswordForm');
+    const message = document.getElementById('passwordMessage');
+    const button = form.querySelector('button[type=submit]');
+    form.addEventListener('submit', async event => {
         event.preventDefault();
-        message.hidden = true;
-        const currentPassword = document.getElementById("currentPassword").value;
-        const newPassword = document.getElementById("newPassword").value;
-        const confirmPassword = document.getElementById("confirmNewPassword").value;
-
-        if (newPassword !== confirmPassword) {
-            message.textContent = "The new passwords do not match.";
-            message.hidden = false;
-            return;
-        }
-        if (newPassword.length < 12) {
-            message.textContent = "Choose a new password with at least 12 characters.";
-            message.hidden = false;
-            return;
-        }
-
+        if (button.disabled) return;
+        button.disabled = true;
+        message.hidden = false;
         try {
-            window.CampusSyncLocal.changePassword(currentPassword, newPassword);
-            message.textContent = "Password changed in this browser.";
-            message.hidden = false;
+            const password = document.getElementById('newPassword').value;
+            if (password !== document.getElementById('confirmNewPassword').value) throw new Error('The new passwords do not match.');
+            await firebase.changeAccountPassword(document.getElementById('currentPassword').value, password);
             form.reset();
-        } catch (error) {
-            message.textContent = error.message;
-            message.hidden = false;
-        }
+            message.textContent = 'Password changed for your CampusSync account.';
+        } catch (error) { message.textContent = firebase.friendlyError(error); }
+        finally { button.disabled = false; }
     });
 });

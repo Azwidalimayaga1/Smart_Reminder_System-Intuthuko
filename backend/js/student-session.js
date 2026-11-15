@@ -25,6 +25,12 @@
     }
 
     const ready = restore().catch(error => {
+        if (error.code === 'auth/email-not-verified') {
+            localStorage.removeItem(marker);
+            if (!/\/(login|admin-login|tutor-login|super-admin-login|register)\.html$/.test(location.pathname)) {
+                location.replace('login.html');
+            }
+        }
         restoreError = error;
         console.error('Could not restore the Firebase session.', error);
         return null;
@@ -46,12 +52,14 @@
         async signInWithEmail(firebase, email, password) {
             return activateCloudSession(await firebase.emailLogin(email, password));
         },
+        async completeVerification(firebase) {
+            return activateCloudSession(await firebase.finishVerification());
+        },
         async signInWithGoogle(firebase) {
             return activateCloudSession(await firebase.googleLogin());
         },
         async signOut() {
             await ready;
-            if (localStorage.getItem(marker) !== 'active') return;
             await (await loadFirebase()).logout();
             localStorage.removeItem(marker);
             cloudUser = null;

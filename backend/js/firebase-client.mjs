@@ -1,8 +1,9 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js';
-import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, reauthenticateWithPopup } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
+import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, reauthenticateWithPopup, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, reload, getIdToken, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
 import { getFirestore, doc, collection, getDocFromServer, getDocsFromServer, query, where, runTransaction, writeBatch, onSnapshot,
   setDoc } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.mjs';
+import { requireStrongPassword, passwordRequirements } from './password-policy.mjs';
 import { unpackItem, packItem, defaultProfile, newTask } from './shared-schema.mjs';
 
 export const app = initializeApp(firebaseConfig);
@@ -16,7 +17,9 @@ export function friendlyError(error) {
   const messages = {
     'auth/invalid-credential': 'Your CampusSync email or password was not accepted. If you only signed up with Google, choose Continue with Google.',
     'auth/email-already-in-use': 'This email is already registered. Sign in with your app password.',
-    'auth/weak-password': 'Use a password of at least 8 characters.',
+    'auth/weak-password': passwordRequirements,
+    'auth/password-does-not-meet-requirements': passwordRequirements,
+    'auth/too-many-requests': 'Too many attempts. Wait a while before trying again.',
     'auth/unauthorized-domain': 'Add this website address to Firebase Authentication → Settings → Authorized domains.',
     'permission-denied': 'Firebase could not allow this request. Check that the app’s Firestore rules are published.',
     'auth/popup-blocked': 'Allow pop-ups for this website and try again.',
@@ -32,7 +35,12 @@ export async function currentUser() {
   return auth.currentUser;
 }
 
+function requireVerified(user) {
+  if (!user.emailVerified) throw Object.assign(new Error('Verify your email before signing in. Check your inbox and spam folder.'), {code:'auth/email-not-verified'});
+}
+
 async function openAccount(user, name, studentNumber) {
+  requireVerified(user);
   const role = (await getDocFromServer(doc(db, 'roles', user.uid))).data();
   if (role?.disabled === true) throw new Error('This account is disabled. Contact your campus administrator.');
   const profile = doc(db, 'profiles', user.uid);
@@ -56,6 +64,7 @@ async function openAccount(user, name, studentNumber) {
 export async function requireUser() {
   const user = await currentUser();
   if (!user) throw new Error('Please sign in to your Firebase account.');
+  requireVerified(user);
   if (openedAccount?.id !== user.uid) {
     if (!opening) opening = openAccount(user).finally(() => { opening = null; });
     await opening;
@@ -70,12 +79,54 @@ export async function sessionAccount() {
 
 async function finishLogin(credential) {
   try { return await openAccount(credential.user); }
-  catch (error) { await logout(); throw error; }
+  catch (error) { if (error.code !== 'auth/email-not-verified') await logout(); throw error; }
 }
 
 export async function emailLogin(email, password) {
   const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
   return finishLogin(credential);
+}
+
+export async function registerAccount(name, email, password, studentNumber) {
+  requireStrongPassword(password);
+  if (name.trim().length < 3) throw new Error('Enter a name of at least 3 characters.');
+  const {user} = await createUserWithEmailAndPassword(auth, email.trim(), password);
+  // Complete the profile only after the email is verified and Firestore allows access.
+  try { await updateProfile(user, {displayName:name.trim()}); }
+  catch { /* Registration succeeded. The verification screen still lets the user continue. */ }
+  sessionStorage.setItem('campusSyncPendingRegistration', JSON.stringify({uid:user.uid, name:name.trim(), studentNumber:studentNumber.trim()}));
+  await resendVerification();
+}
+
+export async function resendVerification() {
+  const user = await currentUser();
+  if (!user) throw new Error('Sign in first to request a verification email.');
+  if (user.emailVerified) throw new Error('Your email is already verified. Continue to sign in.');
+  await sendEmailVerification(user);
+}
+
+export async function finishVerification() {
+  const user = await currentUser();
+  if (!user) throw new Error('Please sign in again.');
+  await reload(user);
+  requireVerified(user);
+  await getIdToken(user, true);
+  let details;
+  try { details = JSON.parse(sessionStorage.getItem('campusSyncPendingRegistration') || 'null'); } catch {}
+  const account = await openAccount(user, details?.uid === user.uid ? details.name : undefined,
+      details?.uid === user.uid ? details.studentNumber : undefined);
+  sessionStorage.removeItem('campusSyncPendingRegistration');
+  return account;
+}
+
+export async function changeAccountPassword(currentPassword, password) {
+  requireStrongPassword(password);
+  const user = await requireUser();
+  if (!user.providerData.some(provider => provider.providerId === 'password')) {
+    throw new Error('Manage your Google password in your Google account.');
+  }
+  await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, currentPassword));
+  await updatePassword(user, password);
 }
 
 export async function googleLogin() {
