@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resetAvailableAt = Date.now() + 60000;
             resetButton.textContent = 'Reset link requested';
             setTimeout(() => {
-                resetButton.textContent = 'Reset or update password';
+                resetButton.textContent = 'Forgot password?';
                 resetButton.disabled = busy;
             }, 60000);
         } catch (error) {
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else {
                 showError(!useDemo && firebase ? firebase.friendlyError(error) : error.message);
                 if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(error.code)) {
-                    resetMessage.textContent = 'Already have an account? Select Reset or update password. After using the emailed link, your new CampusSync password works on both the website and app. For Google sign-in, you can also sign in with Google, then add a CampusSync password in Settings.';
+                    resetMessage.textContent = 'Already have an account? Select Forgot password?. After using the emailed link, your new CampusSync password works on both the website and app. For Google sign-in, you can also sign in with Google, then add a CampusSync password in Settings.';
                     resetButton.focus();
                 }
             }

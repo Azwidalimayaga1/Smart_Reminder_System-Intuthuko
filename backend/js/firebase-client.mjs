@@ -15,7 +15,7 @@ const listeners = new Set();
 
 export function friendlyError(error) {
   const messages = {
-    'auth/invalid-credential': 'We could not sign you in. Check your email, or use Reset or update password below to choose a new CampusSync password.',
+    'auth/invalid-credential': 'We could not sign you in. Check your email, or use Forgot password? below to choose a new CampusSync password.',
     'auth/wrong-password': 'The current password was not accepted. Use the password-reset email option to choose a new password.',
     'auth/user-mismatch': 'Choose the same Google account you are currently signed in with.',
     'auth/credential-already-in-use': 'This sign-in method belongs to another account. Sign in to that account instead.',
