@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js';
-import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, reauthenticateWithPopup, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
+import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, reauthenticateWithPopup, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, updatePassword, reauthenticateWithCredential, linkWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
 import { getFirestore, doc, collection, getDocFromServer, getDocsFromServer, query, where, runTransaction, writeBatch, onSnapshot,
   setDoc } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.mjs';
@@ -15,7 +15,10 @@ const listeners = new Set();
 
 export function friendlyError(error) {
   const messages = {
-    'auth/invalid-credential': 'Your CampusSync email or password was not accepted. If you only signed up with Google, choose Continue with Google.',
+    'auth/invalid-credential': 'We could not sign you in. Check your email, or use Reset or update password below to choose a new CampusSync password.',
+    'auth/wrong-password': 'The current password was not accepted. Use the password-reset email option to choose a new password.',
+    'auth/user-mismatch': 'Choose the same Google account you are currently signed in with.',
+    'auth/credential-already-in-use': 'This sign-in method belongs to another account. Sign in to that account instead.',
     'auth/email-already-in-use': 'This email is already registered. Sign in with your app password.',
     'auth/weak-password': passwordRequirements,
     'auth/password-does-not-meet-requirements': passwordRequirements,
@@ -131,7 +134,14 @@ export async function changeAccountPassword(currentPassword, password) {
   requireStrongPassword(password);
   const user = await requireUser();
   if (!user.providerData.some(provider => provider.providerId === 'password')) {
-    throw new Error('Manage your Google password in your Google account.');
+    if (!user.providerData.some(provider => provider.providerId === 'google.com')) {
+      throw new Error('Use the password-reset email option to set a CampusSync password.');
+    }
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({prompt: 'select_account', login_hint: user.email});
+    await reauthenticateWithPopup(user, provider);
+    await linkWithCredential(user, EmailAuthProvider.credential(user.email, password));
+    return;
   }
   await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, currentPassword));
   await updatePassword(user, password);

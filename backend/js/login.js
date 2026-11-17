@@ -43,11 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             firebase = await session.loadFirebase();
             await firebase.resetPassword(emailInput.value);
-            resetMessage.textContent = 'If this email has an account, a password-reset link will arrive shortly. Check your inbox and spam folder. If you use Google, you can also choose Continue with Google.';
+            resetMessage.textContent = 'If this email has an account, a password-reset link will arrive shortly. Check your inbox and spam folder. Open the link, choose a strong new password, then return here and sign in with it. You do not need to create another account.';
             resetAvailableAt = Date.now() + 60000;
             resetButton.textContent = 'Reset link requested';
             setTimeout(() => {
-                resetButton.textContent = 'Forgot password?';
+                resetButton.textContent = 'Reset or update password';
                 resetButton.disabled = busy;
             }, 60000);
         } catch (error) {
@@ -74,7 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             if (error.code === 'auth/email-not-verified') window.CampusSyncVerification.show(firebase);
-            else showError(!useDemo && firebase ? firebase.friendlyError(error) : error.message);
+            else {
+                showError(!useDemo && firebase ? firebase.friendlyError(error) : error.message);
+                if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(error.code)) {
+                    resetMessage.textContent = 'Already have an account? Select Reset or update password. After using the emailed link, your new CampusSync password works on both the website and app. For Google sign-in, you can also sign in with Google, then add a CampusSync password in Settings.';
+                    resetButton.focus();
+                }
+            }
         } finally { setBusy(false); }
     });
 
